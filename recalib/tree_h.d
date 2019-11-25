@@ -1,0 +1,54 @@
+
+# DO NOT DELETE
+
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TROOT.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TDirectory.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TNamed.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TObject.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/Rtypes.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/RConfig.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/RVersion.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/DllImport.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/Rtypeinfo.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/snprintf.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/strlcpy.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TGenericClassInfo.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TSchemaHelper.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TStorage.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TVersionCheck.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/Riosfwd.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TBuffer.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TString.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TMathBase.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TList.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TSeqCollection.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TCollection.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TIterator.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TDatime.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TUUID.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TChain.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TTree.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TBranch.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TObjArray.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TAttFill.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TDataType.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TDictionary.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/Property.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/ESTLType.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TAttLine.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TAttMarker.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TArrayD.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TArray.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TArrayI.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TClass.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TObjString.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/ThreadLocalStorage.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/RConfigure.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TVirtualTreePlayer.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TFile.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TDirectoryFile.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TMap.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/THashTable.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/TUrl.h
+./tree_h.so: /home/NiGIRI/cern-root-new/include/cintdictversion.h /home/NiGIRI/cern-root-new/include/RVersion.h
+tree_h__ROOTBUILDVERSION= 5.34/36
