@@ -170,7 +170,10 @@ void sorter(char* infile, char* outfile)
 //                     cout<<endl;
 		     //cout<<h1->GetFunction("fWaveform")->GetParameter(1)<<"\t"<<h1->GetFunction("fWaveform")->GetMaximum()<<"\t"<<h1->GetFunction("fWaveform")->GetChisquare()/h1->GetFunction("fWaveform")->GetNDF()<<endl;
                      //cout<<h1->GetFunction("fWaveform")->GetMaximum()<<"\t"<<inbeta->dgtz_bl[i]<<"\t"<<h1->GetFunction("fWaveform")->GetMaximum()-inbeta->dgtz_bl[i]<<"\t"<<inbeta->dgtz_e[i]<<endl;
-		     hevse->Fill(inbeta->dgtz_e[i],h1->GetFunction("fWaveform")->GetMaximum()-inbeta->dgtz_bl[i]);
+                     //Double_t bl=inbeta->dgtz_bl[i];
+                     Double_t bl=h1->GetBinContent(h1->GetMinimumBin());
+
+                     hevse->Fill(inbeta->dgtz_e[i],h1->GetFunction("fWaveform")->GetMaximum()-bl);
 
                      if (i==57) {
                          hmaxe->Fill(inbeta->dgtz_e[i]);
@@ -179,8 +182,8 @@ void sorter(char* infile, char* outfile)
 
                      h1->Draw();
                      c1->Update();
-                     c1->WaitPrimitive();
-                     gSystem->Sleep(2000);
+                     //c1->WaitPrimitive();
+                     //gSystem->Sleep(2000);
 		     delete fWaveform;
                    }
                    delete h1;

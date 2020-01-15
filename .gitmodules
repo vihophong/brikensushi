@@ -1,0 +1,3 @@
+[submodule "online_distribution"]
+	path = online_distribution
+	url = https://github.com/vihophong/online_distribution.git
