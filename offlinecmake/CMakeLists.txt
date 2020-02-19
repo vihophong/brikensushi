@@ -26,12 +26,17 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.h)
 
 link_directories($ENV{ONLINE_MAIN}/lib)
 
+
+#---Create a shared library with geneated dictionary
+ROOT_GENERATE_DICTIONARY(G__libDataStruct ${PROJECT_SOURCE_DIR}/include/libDataStruct.h LINKDEF ${PROJECT_SOURCE_DIR}/include/libDataStructLinkDef.h)
+add_library(libDataStruct SHARED ${PROJECT_SOURCE_DIR}/include/libDataStruct.h  G__libDataStruct.cxx)
+target_link_libraries(libDataStruct ${ROOT_LIBRARIES})
+
 #---Create a shared library with geneated dictionary
 ROOT_GENERATE_DICTIONARY(G__libmyanalysis ${PROJECT_SOURCE_DIR}/include/myanalysis.h LINKDEF ${PROJECT_SOURCE_DIR}/include/myanalysisLinkDef.h)
 add_library(myanalysis SHARED ${sources} ${headers}  G__libmyanalysis.cxx)
 target_link_libraries(myanalysis pmonitor Event NoRootEvent message)
-
-target_link_libraries(myanalysis ${ROOT_LIBRARIES})
+target_link_libraries(myanalysis libDataStruct)
 
 #----------------------------------------------------------------------------
 # Copy all resources including scripts, examples, text files, etc... to the build directory, i.e. the directory in which we
