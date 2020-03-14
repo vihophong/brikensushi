@@ -1,0 +1,11 @@
+beam/beamrun04082.root
+beam/beamrun04083.root
+beam/beamrun04084.root
+beam/beamrun04085.root
+beam/beamrun04086.root
+beam/beamrun04087.root
+beam/beamrun04088.root
+beam/beamrun04089.root
+beam/beamrun04090.root
+beam/beamrun04091.root
+beam/beamrun04092.root

@@ -1,0 +1,35 @@
+[phong@mars beta-zerooffset]$ root -l outrootfiles/check_gainmatch_wdssd3bi207_usingpeaks.root 
+root [0] 
+Attaching file outrootfiles/check_gainmatch_wdssd3bi207_usingpeaks.root as _file0...
+(TFile *) 0x3009250
+root [1] tree->Draw("ey>>h3(200,0,1200)","z==3","colz")
+Info in <TCanvas::MakeDefCanvas>:  created default TCanvas with name c1
+(long long) 20032628
+root [2] h3->GetBinCenter(h3->GetMaximumBin())
+(double) 405.00000
+root [3] tree->Draw("ey>>h2(200,0,1200)","z==2","colz")
+(long long) 17141676
+root [4] h2->GetBinCenter(h2->GetMaximumBin())
+(double) 687.00000
+root [5] tree->Draw("ey>>h1(200,0,1200)","z==1","colz")
+(long long) 12487182
+root [6] h1->GetBinCenter(h1->GetMaximumBin())
+(double) 579.00000
+root [11] tree->Draw("ey>>h0(200,0,1200)","z==0&&ey>100","colz")
+(long long) 8158507
+root [12] h0->GetBinCenter(h0->GetMaximumBin())
+(double) 489.00000
+
+predict energy shift
+root [18] 687.00000-579.00000
+(double) 108.00000
+root [17] 687+108
+(int) 795
+
+795 - 405
+687 - 349.98113 -> 
+579 - 294.96226
+489 - 249.11321
+
+
+

@@ -1,0 +1,33 @@
+ey0-3
+fX1=10.3727             ;//X of 1st point
+fY1=114.953             ;//Y of 1st point
+fX2=266.36              ;//X of 2nd point
+fY2=518.78              ;//Y of 2nd point
+ey2-1
+fX1=13.425              ;//X of 1st point
+fY1=88.9791             ;//Y of 1st point
+fX2=321.252             ;//X of 2nd point
+fY2=491.416             ;//Y of 2nd point
+ey3-2
+fX1=10.9913             ;//X of 1st point
+fY1=6.51344             ;//Y of 1st point
+fX2=433.989             ;//X of 2nd point
+fY2=400.422             ;//Y of 2nd point
+
+--> y=ax+b :
+a=(fY2-fY1)/(fX2-fX1)
+b=fY2 -(fY2-fY1)/(fX2-fX1)*fX2
+
+dssd	a	b
+0	1.5775275	98.589781
+1	1.3073476	71.427958
+2	0.93123097	-3.7219990
+
+
+0,1.5775275,98.589781
+1,1.3073476,71.427958
+2,0.93123097,-3.7219990
+
+dominfull("dssd0_ion_coefs.txt","alldssds_gainmatchedbetweendssds_final.txt",0,1.5775275,98.589781);
+dominfull("dssd1_ion_coefs.txt","alldssds_gainmatchedbetweendssds_final.txt",1,1.3073476,71.427958);
+dominfull("dssd2_ion_coefs.txt","alldssds_gainmatchedbetweendssds_final.txt",2,0.93123097,-3.7219990);

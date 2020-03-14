@@ -33,8 +33,6 @@
 
 #define MAX_MAP_LENGTH 50
 
-
-
 // default constant
 
 #define CH_THRESHOLD 50

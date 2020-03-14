@@ -1,0 +1,60 @@
+[phong@mars cal_between_dssds_beta-zerooffset]$ root -l outrootfiles/hEradio_between_dssd.root
+root [0] 
+Attaching file outrootfiles/hEradio_between_dssd.root as _file0...
+(TFile *) 0x273a930
+root [1] .L fitsplitnormal.C 
+root [2] fitsplitnormal(hx30a,0.2,3.5,100,2,5)
+Info in <TCanvas::MakeDefCanvas>:  created default TCanvas with name c1
+final fit result
+0	1.78926	0.018766
+1	0.349682	0.013991
+2	0.471495	0.0154225
+3	77.7039	1.6234
+4	5.50323	0.363717
+root [3] fitsplitnormal(hx31,0.2,3.5,100,2,5)
+final fit result
+0	1.49633	0.0144546
+1	0.303165	0.00990625
+2	0.447182	0.0124418
+3	93.0889	1.82897
+4	2.12077	0.23968
+root [4] fitsplitnormal(hx32,0.2,3.5,100,2,5)
+final fit result
+0	1.22531	0.0120615
+1	0.261177	0.00902348
+2	0.388635	0.0104741
+3	109.763	2.18682
+4	2.10016	0.226261
+root [5] fitsplitnormal(hy30a,0.1,2.,100,2,5)
+final fit result
+0	0.779142	0.00778338
+1	0.164673	0.00581704
+2	0.238038	0.00654799
+3	132.524	2.62603
+4	4.38004	0.356141
+root [6] fitsplitnormal(hy31,0.1,2.,100,2,5)
+final fit result
+0	0.646435	0.00523978
+1	0.134194	0.00382597
+2	0.210536	0.00352055
+3	157.607	2.87938
+4	1.76487	0.201243
+root [7] fitsplitnormal(hy32,0.1,2.,100,2,5)
+final fit result
+0	0.532455	0.00529717
+1	0.106401	0.00370587
+2	0.165778	0.00465162
+3	193.588	3.81958
+4	5.10848	0.549351
+
+----------------
+Summary:
+
+dssd	side	gain_ref
+0	x	1.78926
+1	x	1.49633
+2	x	1.22531
+0	y	0.779142
+1	y	0.646435
+2	y	0.532455
+
