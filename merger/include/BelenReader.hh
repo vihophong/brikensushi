@@ -40,6 +40,10 @@ public:
     void Init(char* belenfile);
     //! book tree if we want to store files
     void BookTree(TTree* treeNeutron, TTree *treeGamma, TTree *treeAnc, BELENHit* neutron,CloverHit* gamma, BELENHit* anc);
+
+    //! book tree if we want to store files
+    void BookYSOTree(TTree* treeYSOion, TTree *treeYSObeta);
+
     //! close file reader
     void CloseReader(){finfile->Close();}
 
@@ -49,20 +53,35 @@ public:
     bool GetNextNeutronEvent();
      //! get next gamma event
     bool GetNextGammaEvent();
-     //! get next ancillary event
+    //! get next ancillary event
     bool GetNextAncEvent();
+
+    //! get next YSO event
+    bool GetNextYSOEvent();
 
 
     //! Get total number of events from the input file
     int GetNEvents(){return fnentries;}
+    //! Get total number of YSO events from the input file
+    int GetNYSOEvents(){return fnentriesYSO;}
+
     //! Get current processing entry
     int GetCurrentEvent(){return fcurentry;}
+
+    //! Get current processing entry
+    int GetCurrentYSOEvent(){return fcurentryYSO;}
+
     //! Get current processing neutron entry
     int GetCurrentNeutronEvent(){return fBLNeuEntry;}
     //! Get current processing gamma entry
     int GetCurrentGammaEvent(){return fBLGamEntry;}
     //! Get current processing ancillary entry
     int GetCurrentAncEvent(){return fBLAncEntry;}
+
+    //! Get current processing YSO ion event entry
+    int GetCurrentYSOIonEvent(){return fBLYSOEntryIon;}
+    //! Get current processing YSO ion event entry
+    int GetCurrentYSOBetaEvent(){return fBLYSOEntryBeta;}
 
     //! neutron hits
     BELENHit* GetNeutron(){return flocalNeutron;}
@@ -100,8 +119,16 @@ protected:
     char* fmappingfile;
     //! number of entries in belen file
     unsigned long long fnentries;
+
+    //! number of entries in belen file for YSO
+    unsigned long long fnentriesYSO;
+
     //! current entry in belen file
     unsigned long long fcurentry;
+
+    //! current YSO entry in belen file
+    unsigned long long fcurentryYSO;
+
     //! current neutron entry
     unsigned long long fBLNeuEntry;
     //! current gamma entry
@@ -109,12 +136,20 @@ protected:
     //! current ancillary  entry
     unsigned long long fBLAncEntry;
 
+
+    //! current YSO  entry
+    unsigned long long fBLYSOEntryIon;
+    unsigned long long fBLYSOEntryBeta;
+
     //! current time stamp of gamma
     unsigned long long fBLtsGamma;
     //! current time stamp of neutron
     unsigned long long fBLtsNeutron;
     //! current time stamp of ancillary
     unsigned long long fBLtsAnc;
+
+    //! current YSO  entry
+    unsigned long long fBLtsYSO;
 
     //! data structure
     Double_t        fE;
@@ -155,7 +190,6 @@ protected:
     //! ancillary single hit
     BELENHit* flocalAnc;
 
-
     //! input files
     TFile* finfile;
 
@@ -164,14 +198,24 @@ protected:
     BrikenTreeData* ftreedataGamma;
     BrikenTreeData* ftreedataAnc;
 
+    YSOData* ftreedataYSO;
+
     //! input tree
     TTree* ftree;
+
+    //! input tree YSO
+    TTree* ftreeYSO;
+
     //!  output tree for Neutron
     TTree* fmtrNeutron;
     //!  output tree for Gamma
     TTree* fmtrGamma;
     //!  output tree for Anc
     TTree* fmtrAnc;
+
+    //!  output tree for YSO
+    TTree* fmtrYSObeta;
+    TTree* fmtrYSOion;
 
     TRandom rr;
 

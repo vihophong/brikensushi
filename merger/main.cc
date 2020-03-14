@@ -29,12 +29,14 @@ int main(int argc, char* argv[]){
     char* InputWASABI = NULL;
     char* InputBELEN = NULL;
     char* InputBIGRIPS = NULL;
+    char* InputPID = NULL;
     char* OutFile = NULL;
 
     CommandLineInterface* interface = new CommandLineInterface();
     interface->Add("-w", "Wasabi input file", &InputWASABI);
     interface->Add("-bl", "BELEN input file", &InputBELEN);
     interface->Add("-br", "Bigrips input file", &InputBIGRIPS);
+    interface->Add("-pid", "Input PID file", &InputPID);
     interface->Add("-o", "output file", &OutFile);
 
     interface->CheckFlags(argc, argv);
@@ -92,9 +94,15 @@ int main(int argc, char* argv[]){
         merge->DoAddback();
 
         ofile->cd();
+        if (InputPID!=NULL) merge->ReadPID(InputPID);
         merge->BookImplantTree();
         merge->MergeImplant();
         ofile->cd();
+
+        for (Int_t i=0;i<merge->GetNri();i++){
+            merge->GetTreeImpRI(i)->Write();
+        }
+
         merge->GetTreeImpRI(-1)->Write();
         merge->getProbeHisto1D(0)->Write();
         ofile->Close();

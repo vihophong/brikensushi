@@ -76,6 +76,7 @@ target_link_libraries(belenreader BRIKENTreeData)
 set(PROJ_DATA
   resource1.txt
   He3_mapping.txt
+  pidfile.txt
   )
 
 

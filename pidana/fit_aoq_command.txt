@@ -1,0 +1,36 @@
+.L plotpid.C
+projectpid("pid.root",32.0652,0.190591,"z32.txt","z32_res.txt")
+projectpid("pid.root",33.076,0.180064,"z33.txt","z33_res.txt")
+projectpid("pid.root",34.0777,0.179978,"z34.txt","z34_res.txt")
+projectpid("pid.root",35.0864,0.181737,"z35.txt","z35_res.txt")
+projectpid("pid.root",36.0903,0.182243,"z36.txt","z36_res.txt")
+projectpid("pid.root",37.0939,0.18384,"z37.txt","z37_res.txt")
+projectpid("pid.root",38.0904,0.184702,"z38.txt","z38_res.txt")
+projectpid("pid.root",39.0939,0.183463,"z39.txt","z39_res.txt")
+projectpid("pid.root",40.0836,0.184539,"z40.txt","z40_res.txt")
+projectpid("pid.root",41.081,0.186285,"z41.txt","z41_res.txt")
+projectpid("pid.root",42.078,0.187602,"z42.txt","z42_res.txt")
+projectpid("pid.root",43.0731,0.190105,"z43.txt","z43_res.txt")
+projectpid("pid.root",44.0696,0.192538,"z44.txt","z44_res.txt")
+projectpid("pid.root",45.0649,0.19408,"z45.txt","z45_res.txt")
+projectpid("pid.root",46.0526,0.197316,"z46.txt","z46_res.txt")
+
+
+.L plotpid.C
+projectpid("pid.root",32.0652,0.190591,"z32.txt","results_aoqcut.txt",1)
+projectpid("pid.root",33.076,0.180064,"z33.txt","results_aoqcut.txt",1)
+projectpid("pid.root",34.0777,0.179978,"z34.txt","results_aoqcut.txt",1)
+projectpid("pid.root",35.0864,0.181737,"z35.txt","results_aoqcut.txt",1)
+projectpid("pid.root",36.0903,0.182243,"z36.txt","results_aoqcut.txt",1)
+projectpid("pid.root",37.0939,0.18384,"z37.txt","results_aoqcut.txt",1)
+projectpid("pid.root",38.0904,0.184702,"z38.txt","results_aoqcut.txt",1)
+projectpid("pid.root",39.0939,0.183463,"z39.txt","results_aoqcut.txt",1)
+projectpid("pid.root",40.0836,0.184539,"z40.txt","results_aoqcut.txt",1)
+projectpid("pid.root",41.081,0.186285,"z41.txt","results_aoqcut.txt",1)
+projectpid("pid.root",42.078,0.187602,"z42.txt","results_aoqcut.txt",1)
+projectpid("pid.root",43.0731,0.190105,"z43.txt","results_aoqcut.txt",1)
+projectpid("pid.root",44.0696,0.192538,"z44.txt","results_aoqcut.txt",1)
+projectpid("pid.root",45.0649,0.19408,"z45.txt","results_aoqcut.txt",1)
+projectpid("pid.root",46.0526,0.197316,"z46.txt","results_aoqcut.txt",1)
+
+

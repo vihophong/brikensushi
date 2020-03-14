@@ -32,4 +32,43 @@ public:
     ///
 };
 
+class AidaTreeData {
+public:
+    AidaTreeData( ){};
+    ~AidaTreeData(){};
+
+
+    ULong64_t       T;
+    ULong64_t       Tfast;
+    Double_t        E;
+    Double_t        EX;
+    Double_t        EY;
+    Double_t        x;
+    Double_t        y;
+    Double_t        z;
+    Int_t         nx;
+    Int_t         ny;
+    Int_t         nz;
+    UChar_t         ID;
+    void clear(){
+        T=0;
+        Tfast=0;
+        E=0;
+        EX=0;
+        EY=0;
+        x=0;
+        y=0;
+        z=0;
+        ID=0;
+
+    }
+    /// \cond CLASSIMP
+    ClassDef(AidaTreeData,1);
+    /// \endcond
+    ///
+
+};
+
+typedef AidaTreeData YSOData;
+
 #endif

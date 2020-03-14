@@ -7,17 +7,24 @@ Merger::Merger():implantdata()
     fTW_IonBetalow=20000000000;
     fTW_IonBetaup=10000000000;
 
-    fTW_IonPidup = 20000;
-    fTW_IonPidlow = 20000;
-    fTW_IonF11LRup=10000;
-    fTW_IonF11LRlow=80000;
-    fTW_IondEup = 10000;
-    fTW_IondElow = 80000;
-    fTW_IonDownVetoup = 10000;
-    fTW_IonDownVetolow = 80000;
+    fTW_IonPidlow = 8500;
+    fTW_IonPidup = -8000;
+
+    fTW_IonF11LRlow=8000;
+    fTW_IonF11LRup=-7000;
+
+
+    fTW_IondElow = 8000;
+    fTW_IondEup = -7000;
+
+    fTW_IonDownVetolow = 8000;
+    fTW_IonDownVetoup = -7000;
 
     fTW_PIDGammalow = 400000;
     fTW_PIDGammaup = 400000;
+
+    fTW_IonYSOionlow = 8200;
+    fTW_IonYSOionup = -8000;
 
 
     fsquareSpatialWindowX=3*3;
@@ -158,11 +165,17 @@ void Merger::Init()
     fclover = NULL;
     fneutron = NULL;
     fanc = NULL;
+    fysoion = NULL;
+    fysobeta = NULL;
+
 
     fnentriesBigrips = 0;
     fnentriesGamma = 0;
     fnentriesNeutron = 0;
     fnentriesAnc = 0;
+
+    fnentriesYSOIon = 0;
+    fnentriesYSOBeta = 0;
 
     if (finputWasabi!=NULL){
         //! init wasabi
@@ -186,20 +199,30 @@ void Merger::Init()
         fBrikenFile->GetObject("neutron",ftrNeutron);
         fBrikenFile->GetObject("gammas",ftrGamma);
         fBrikenFile->GetObject("anc",ftrAnc);
+        fBrikenFile->GetObject("ysoion",ftrYSOIon);
+        fBrikenFile->GetObject("ysobeta",ftrYSOBeta);
         ftrNeutron->SetBranchAddress("neutron",&fneutron);
         ftrGamma->SetBranchAddress("gamma",&fclover);
         ftrAnc->SetBranchAddress("anc",&fanc);
+        ftrYSOIon->SetBranchAddress("ysoion",&fysoion);
+        ftrYSOBeta->SetBranchAddress("ysobeta",&fysobeta);
+
         fnentriesNeutron = ftrNeutron->GetEntries();
         fnentriesGamma = ftrGamma->GetEntries();
         fnentriesAnc = ftrAnc->GetEntries();
+        fnentriesYSOIon = ftrYSOIon->GetEntries();
+        fnentriesYSOBeta = ftrYSOBeta->GetEntries();
+
         cout<<"Reading "<<fnentriesNeutron<<" neutrons, "
-           <<fnentriesGamma<<" gammas and "<<fnentriesAnc<<" anc hits in AIDA tree"<<endl;
+           <<fnentriesGamma<<" gammas, "<<fnentriesAnc<<" anc hits, "<<fnentriesYSOIon<<" yso ion hits, "<<fnentriesYSOBeta<<" and yso beta hits in AIDA tree"<<endl;
         cout<<"Printing first few timestamp:"<<endl;
         for (Long64_t i=0;i<10;i++){
             ftrNeutron->GetEvent(i);
             ftrGamma->GetEvent(i);
             ftrAnc->GetEvent(i);
-            cout<<"neutronts "<<fneutron->GetTimestamp()<<"- gammats "<<fclover->GetTimestamp()<<"- ancts"<<fanc->GetTimestamp()<<endl;
+            ftrYSOIon->GetEvent(i);
+            ftrYSOBeta->GetEvent(i);
+            cout<<"neutronts "<<fneutron->GetTimestamp()<<"- gammats "<<fclover->GetTimestamp()<<"- ancts"<<fanc->GetTimestamp()<<"- ysoionts"<<fysoion->T<<"- ysobetats"<<fysobeta->T<<endl;
         }
     }
 
@@ -388,6 +411,24 @@ void Merger::ReadBRIKEN(unsigned int startN, unsigned int stopN,unsigned int sta
         ftsbeginpulser=firsttspulser1+1.80000e+11;
         ftsendpulser=prevts;
     }
+
+
+    //! read yso ion
+    for (unsigned int jentry = 0;jentry < fnentriesYSOIon;jentry++){
+        ftrYSOIon->GetEvent(jentry);
+        YSOData* hit=new YSOData;
+        copyYSOHit(fysoion,hit);
+        fYSOIonMap.insert(make_pair(hit->T,hit));
+    }
+
+    //! read yso beta
+    for (unsigned int jentry = 0;jentry < fnentriesYSOBeta;jentry++){
+        ftrYSOBeta->GetEvent(jentry);
+        YSOData* hit=new YSOData;
+        copyYSOHit(fysobeta,hit);
+        fYSOBetaMap.insert(make_pair(hit->T,hit));
+    }
+
     //cout<<"Finished reading anc  ts table with "<<fancMap.size()<<" rows"<<endl;
     cout<<"Finished reading F11R  ts table with "<<fF11RMap.size()<<" rows"<<endl;
     cout<<"Finished reading F11L  ts table with "<<fF11LMap.size()<<" rows"<<endl;
@@ -396,6 +437,8 @@ void Merger::ReadBRIKEN(unsigned int startN, unsigned int stopN,unsigned int sta
     cout<<"Finished reading dE Top ts table with "<<fdETopMap.size()<<" rows"<<endl;
     cout<<"Finished reading dE Bottom ts table with "<<fdEBotMap.size()<<" rows"<<endl;
     cout<<"Finished reading Veto Down ts table with "<<fVetoDownMap.size()<<" rows"<<endl;
+    cout<<"Finished reading YSO ion ts table with "<<fYSOIonMap.size()<<" rows"<<endl;
+    cout<<"Finished reading YSO beta ts table with "<<fYSOBetaMap.size()<<" rows"<<endl;
 }
 
 
@@ -411,9 +454,51 @@ void Merger::BookIonBetaTree()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void Merger::BookImplantTree()
 {
+    for (Int_t i=0;i<nri;i++){
+        ftreeimplantRI[i]->Branch("ion",fdataOutWasabiIon);
+        ftreeimplantRI[i]->Branch("implant",&implantdata,"yso_t/D:yso_e/D:yso_x/D:yso_y/D:zet/D:aoq/D:beta/D:F11L_T/D:F11L_E/D:F11R_T/D:F11R_E/D:F7_T/D:veto_T/D:veto_E/D");
+        ftreeimplantRI[i]->Branch("gc_hit",&implantdata.gc_hit,"gc_hit/I");
+        ftreeimplantRI[i]->Branch("gc_E",implantdata.gc_E,"gc_E[gc_hit]/D");
+        ftreeimplantRI[i]->Branch("gc_T",implantdata.gc_T,"gc_T[gc_hit]/D");
+        ftreeimplantRI[i]->Branch("gc_Tslew",implantdata.gc_Tslew,"gc_Tslew[gc_hit]/D");
+        ftreeimplantRI[i]->Branch("gc_ch",implantdata.gc_ch,"gc_ch[gc_hit]/I");
+
+        ftreeimplantRI[i]->Branch("gc1_hit",&implantdata.gc1_hit,"gc1_hit/I");
+        ftreeimplantRI[i]->Branch("gc1_E",implantdata.gc1_E,"gc1_E[gc1_hit]/D");
+        ftreeimplantRI[i]->Branch("gc1_T",implantdata.gc1_T,"gc1_T[gc1_hit]/D");
+        ftreeimplantRI[i]->Branch("gc1_Tslew",implantdata.gc1_Tslew,"gc1_Tslew[gc1_hit]/D");
+        ftreeimplantRI[i]->Branch("gc1_ch",implantdata.gc1_ch,"gc1_ch[gc1_hit]/I");
+
+        ftreeimplantRI[i]->Branch("gc2_hit",&implantdata.gc2_hit,"gc2_hit/I");
+        ftreeimplantRI[i]->Branch("gc2_E",implantdata.gc2_E,"gc2_E[gc2_hit]/D");
+        ftreeimplantRI[i]->Branch("gc2_T",implantdata.gc2_T,"gc2_T[gc2_hit]/D");
+        ftreeimplantRI[i]->Branch("gc2_Tslew",implantdata.gc2_Tslew,"gc2_Tslew[gc2_hit]/D");
+        ftreeimplantRI[i]->Branch("gc2_ch",implantdata.gc2_ch,"gc2_ch[gc2_hit]/I");
+
+
+        ftreeimplantRI[i]->Branch("ab1_hit",&implantdata.ab1_hit,"ab1_hit/I");
+        ftreeimplantRI[i]->Branch("ab1_E",implantdata.ab1_E,"ab1_E[ab1_hit]/D");
+        ftreeimplantRI[i]->Branch("ab1_T",implantdata.ab1_T,"ab1_T[ab1_hit]/D");
+        ftreeimplantRI[i]->Branch("ab1_Tslew",implantdata.ab1_Tslew,"ab1_Tslew[ab1_hit]/D");
+        ftreeimplantRI[i]->Branch("ab1_ch",implantdata.ab1_ch,"ab1_ch[ab1_hit]/I");
+        ftreeimplantRI[i]->Branch("ab1_mult",implantdata.ab1_mult,"ab1_mult[ab1_hit]/S");
+
+        ftreeimplantRI[i]->Branch("ab2_hit",&implantdata.ab2_hit,"ab2_hit/I");
+        ftreeimplantRI[i]->Branch("ab2_E",implantdata.ab2_E,"ab2_E[ab2_hit]/D");
+        ftreeimplantRI[i]->Branch("ab2_T",implantdata.ab2_T,"ab2_T[ab2_hit]/D");
+        ftreeimplantRI[i]->Branch("ab2_Tslew",implantdata.ab2_Tslew,"ab2_Tslew[ab2_hit]/D");
+        ftreeimplantRI[i]->Branch("ab2_ch",implantdata.ab2_ch,"ab2_ch[ab2_hit]/I");
+        ftreeimplantRI[i]->Branch("ab2_mult",implantdata.ab2_mult,"ab2_mult[ab2_hit]/S");
+
+        ftreeimplantRI[i]->Branch("neu_hit",&implantdata.neu_hit,"neu_hit/I");
+        ftreeimplantRI[i]->Branch("neu_E",implantdata.neu_E,"neu_E[neu_hit]/D");
+        ftreeimplantRI[i]->Branch("neu_T",implantdata.neu_T,"neu_T[neu_hit]/D");
+        ftreeimplantRI[i]->Branch("neu_ch",implantdata.neu_ch,"neu_ch[neu_hit]/I");
+
+    }
     ftreeimplantAll=new TTree("treeimp","treeimp");
     ftreeimplantAll->Branch("ion",fdataOutWasabiIon);
-    ftreeimplantAll->Branch("implant",&implantdata,"zet/D:aoq/D:beta/D:F11L_T/D:F11L_E/D:F11R_T/D:F11R_E/D:F7_T/D:veto_T/D:veto_E/D");
+    ftreeimplantAll->Branch("implant",&implantdata,"yso_t/D:yso_e/D:yso_x/D:yso_y/D:zet/D:aoq/D:beta/D:F11L_T/D:F11L_E/D:F11R_T/D:F11R_E/D:F7_T/D:veto_T/D:veto_E/D");
     ftreeimplantAll->Branch("gc_hit",&implantdata.gc_hit,"gc_hit/I");
     ftreeimplantAll->Branch("gc_E",implantdata.gc_E,"gc_E[gc_hit]/D");
     ftreeimplantAll->Branch("gc_T",implantdata.gc_T,"gc_T[gc_hit]/D");
@@ -456,6 +541,7 @@ void Merger::BookImplantTree()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void::Merger::ResetImplantData()
 {
+    implantdata.yso_t=-9999;implantdata.yso_e=-9999;implantdata.yso_x=-9999;implantdata.yso_y=-9999;
     implantdata.zet=-9999.;implantdata.aoq=-9999.;implantdata.beta=-9999;
 
     implantdata.F11L_E=-9999.;implantdata.F11L_T=-9999.;implantdata.F11R_E=-9999.;implantdata.F11R_T=-9999.;
@@ -742,10 +828,11 @@ void Merger::MergeImplant()
     Long64_t k=0;
     Long64_t ncorrwbigrips=0;
     Long64_t ncorrwclover=0;
+    Long64_t ncorrwyso=0;
 
     ResetImplantData();
     for (fwasabiIonMap_it=fwasabiIonMap.begin();fwasabiIonMap_it!=fwasabiIonMap.end();fwasabiIonMap_it++){
-        if (k%10000==0) cout<<k<<"/"<<ktotal<<"\t ncorr w bigrips "<<ncorrwbigrips<<"\t ncorr w clover "<<ncorrwclover<<"\r"<<flush;
+        if (k%10000==0) cout<<k<<"/"<<ktotal<<"\t ncorr w bigrips "<<ncorrwbigrips<<"\t ncorr w clover "<<ncorrwclover<<"\t ncorr w yso "<<ncorrwyso<<"\r"<<flush;
         Long64_t ts=fwasabiIonMap_it->first;
 
         wasabiHit* ionhit=(wasabiHit*) fwasabiIonMap_it->second;
@@ -756,6 +843,12 @@ void Merger::MergeImplant()
         corrvector->correntrydEbot=-9999;
         corrvector->correntrydEtop=-9999;
         corrvector->correntryvetodown=-9999;
+
+        corrvector->yso_t=-9999;
+        corrvector->yso_e=-9999;
+        corrvector->yso_x=-9999;
+        corrvector->yso_y=-9999;
+
         corrvector->gammagc1_vector.clear();
         corrvector->gammagc2_vector.clear();
         corrvector->gammaab1_vector.clear();
@@ -781,6 +874,31 @@ void Merger::MergeImplant()
             fbigripsMap_it++;
         }
         if (ncorr>0) ncorrwbigrips++;
+
+        //! Correlate with yso ion
+        ts1 = ts - fTW_IonYSOionlow;
+        ts2 = ts + fTW_IonYSOionup;
+        corrts = 0;
+        ncorr=0;
+        correntry = 0;
+        check_time = 0;
+        fYSOIonMap_it = fYSOIonMap.lower_bound(ts1);
+
+        while(fYSOIonMap_it!=fYSOIonMap.end()&&fYSOIonMap_it->first<ts2){
+            corrts =  fYSOIonMap_it->first;
+            if (corrts!=check_time){
+                check_time=corrts;
+                YSOData* hit = (YSOData*) fYSOIonMap_it->second;
+                corrvector->yso_t=(Double_t)((Long64_t)hit->T-ts);
+                corrvector->yso_e=hit->E;
+                corrvector->yso_x=hit->x;
+                corrvector->yso_y=hit->y;
+                ncorr++;
+                break;
+            }
+            fYSOIonMap_it++;
+        }
+        if (ncorr>0) ncorrwyso++;
 
         //! Correlate with gamma
         ts1 = ts - fTW_PIDGammalow;
@@ -845,6 +963,11 @@ void Merger::MergeImplant()
             gammaab* ab1 = faddbackclover1Map_it->second;
             if (corrts!=check_time){
                 check_time=corrts;
+
+                ab1->ab_T=(Double_t)(corrts-ts);
+                ab1->ab_Tslew=0;
+                //! time slew correction goes here
+
                 corrvector->gammaab1_vector.emplace_back(ab1);
                 ncorr++;
             }
@@ -865,6 +988,11 @@ void Merger::MergeImplant()
             gammaab* ab2 = faddbackclover2Map_it->second;
             if (corrts!=check_time){
                 check_time=corrts;
+
+                ab2->ab_T=(Double_t)(corrts-ts);
+                ab2->ab_Tslew=0;
+                //! time slew correction goes here
+
                 corrvector->gammaab2_vector.emplace_back(ab2);
                 ncorr++;
             }
@@ -908,42 +1036,6 @@ void Merger::MergeImplant()
             fF11MapL_it++;
         }
 
-        //! Correlate imp with topde
-        ts1 = ts - fTW_IondElow;
-        ts2 = ts + fTW_IondEup;
-        corrts = 0;
-        ncorr=0;
-        check_time = 0;
-        fdETopMap_it = fdETopMap.lower_bound(ts1);
-        while(fdETopMap_it!=fdETopMap.end()&&fdETopMap_it->first<ts2){
-            corrts =  fdETopMap_it->first;
-            if (corrts!=check_time){
-                check_time=corrts;
-                corrvector->correntrydEtop = (int) fdETopMap_it->second;
-                ncorr++;
-                break;
-            }
-            fdETopMap_it++;
-        }
-
-        //! Correlate imp with botde
-        ts1 = ts - fTW_IondElow;
-        ts2 = ts + fTW_IondEup;
-        corrts = 0;
-        ncorr=0;
-        check_time = 0;
-        fdEBotMap_it = fdEBotMap.lower_bound(ts1);
-        while(fdEBotMap_it!=fdEBotMap.end()&&fdEBotMap_it->first<ts2){
-            corrts =  fdEBotMap_it->first;
-            if (corrts!=check_time){
-                check_time=corrts;
-                corrvector->correntrydEbot = (int) fdEBotMap_it->second;
-                ncorr++;
-                break;
-            }
-            fdEBotMap_it++;
-        }
-
         //! Correlate imp with vetodown
         ts1 = ts - fTW_IonDownVetolow;
         ts2 = ts + fTW_IonDownVetoup;
@@ -972,6 +1064,12 @@ void Merger::MergeImplant()
             ImplantCorrelationVector* corrvectorimp=fwasabiImplantMap_it->second.first;
             //! fill wasabidata here
             hit->Copy(*fdataOutWasabiIon);
+
+            implantdata.yso_e=corrvectorimp->yso_e;
+            implantdata.yso_t=corrvectorimp->yso_t;
+            implantdata.yso_x=corrvectorimp->yso_x;
+            implantdata.yso_y=corrvectorimp->yso_y;
+
             //! fill bigrips data here
             if (corrvectorimp->correntrybrips>=0) {
                 ftrBigrips->GetEvent(corrvectorimp->correntrybrips);
@@ -1018,12 +1116,11 @@ void Merger::MergeImplant()
             std::vector<gammahit*>::iterator gammagc1_vector_it;
             Int_t nhit=0;
             for (gammagc1_vector_it=corrvectorimp->gammagc1_vector.begin();gammagc1_vector_it!=corrvectorimp->gammagc1_vector.end();gammagc1_vector_it++){
-                gammahit* hit=*gammagc1_vector_it;
-                implantdata.gc1_ch[nhit]=hit->gc_ch;
-                implantdata.gc1_E[nhit]=hit->gc_E;
-                implantdata.gc1_T[nhit]=hit->gc_T;
-                implantdata.gc1_Tslew[nhit]=hit->gc_Tslew;
-
+                gammahit* gchit=*gammagc1_vector_it;
+                implantdata.gc1_ch[nhit]=gchit->gc_ch;
+                implantdata.gc1_E[nhit]=gchit->gc_E;
+                implantdata.gc1_T[nhit]=gchit->gc_T;
+                implantdata.gc1_Tslew[nhit]=gchit->gc_Tslew;
                 nhit++;
             }
             implantdata.gc1_hit=nhit;
@@ -1031,11 +1128,11 @@ void Merger::MergeImplant()
             std::vector<gammahit*>::iterator gammagc2_vector_it;
             nhit=0;
             for (gammagc2_vector_it=corrvectorimp->gammagc2_vector.begin();gammagc2_vector_it!=corrvectorimp->gammagc2_vector.end();gammagc2_vector_it++){
-                gammahit* hit=*gammagc2_vector_it;
-                implantdata.gc2_ch[nhit]=hit->gc_ch;
-                implantdata.gc2_E[nhit]=hit->gc_E;
-                implantdata.gc2_T[nhit]=hit->gc_T;
-                implantdata.gc2_Tslew[nhit]=hit->gc_Tslew;
+                gammahit* gchit=*gammagc2_vector_it;
+                implantdata.gc2_ch[nhit]=gchit->gc_ch;
+                implantdata.gc2_E[nhit]=gchit->gc_E;
+                implantdata.gc2_T[nhit]=gchit->gc_T;
+                implantdata.gc2_Tslew[nhit]=gchit->gc_Tslew;
                 nhit++;
             }
             implantdata.gc2_hit=nhit;
@@ -1044,12 +1141,12 @@ void Merger::MergeImplant()
             std::vector<gammaab*>::iterator gammaab1_vector_it;
             nhit=0;
             for (gammaab1_vector_it=corrvectorimp->gammaab1_vector.begin();gammaab1_vector_it!=corrvectorimp->gammaab1_vector.end();gammaab1_vector_it++){
-                gammaab* hit=*gammaab1_vector_it;
-                implantdata.ab1_ch[nhit]=hit->ab_ch;
-                implantdata.ab1_E[nhit]=hit->ab_E;
-                implantdata.ab1_T[nhit]=hit->ab_T;
-                implantdata.ab1_Tslew[nhit]=hit->ab_Tslew;
-                implantdata.ab1_mult[nhit]=hit->ab_mult[0]+hit->ab_mult[1]+hit->ab_mult[2]+hit->ab_mult[3];
+                gammaab* abhit=*gammaab1_vector_it;
+                implantdata.ab1_ch[nhit]=abhit->ab_ch;
+                implantdata.ab1_E[nhit]=abhit->ab_E;
+                implantdata.ab1_T[nhit]=abhit->ab_T;
+                implantdata.ab1_Tslew[nhit]=abhit->ab_Tslew;
+                implantdata.ab1_mult[nhit]=abhit->ab_mult[0]+abhit->ab_mult[1]+abhit->ab_mult[2]+abhit->ab_mult[3];
                 nhit++;
             }
             implantdata.ab1_hit=nhit;
@@ -1057,17 +1154,25 @@ void Merger::MergeImplant()
             std::vector<gammaab*>::iterator gammaab2_vector_it;
             nhit=0;
             for (gammaab2_vector_it=corrvectorimp->gammaab2_vector.begin();gammaab2_vector_it!=corrvectorimp->gammaab2_vector.end();gammaab2_vector_it++){
-                gammaab* hit=*gammaab2_vector_it;
-                implantdata.ab2_ch[nhit]=hit->ab_ch;
-                implantdata.ab2_E[nhit]=hit->ab_E;
-                implantdata.ab2_T[nhit]=hit->ab_T;
-                implantdata.ab2_Tslew[nhit]=hit->ab_Tslew;
-                implantdata.ab2_mult[nhit]=hit->ab_mult[0]+hit->ab_mult[1]+hit->ab_mult[2]+hit->ab_mult[3];
+                gammaab* abhit=*gammaab2_vector_it;
+                implantdata.ab2_ch[nhit]=abhit->ab_ch;
+                implantdata.ab2_E[nhit]=abhit->ab_E;
+                implantdata.ab2_T[nhit]=abhit->ab_T;
+                implantdata.ab2_Tslew[nhit]=abhit->ab_Tslew;
+                implantdata.ab2_mult[nhit]=abhit->ab_mult[0]+abhit->ab_mult[1]+abhit->ab_mult[2]+abhit->ab_mult[3];
                 nhit++;
             }
             implantdata.ab2_hit=nhit;
             //! fill neutron data here
             ftreeimplantAll->Fill();
+            //! separate tree and fill
+            for (Int_t j=0;j<nri;j++){
+                if (!enablepid2[j]) continue;
+                if (cutg[j]->IsInside(implantdata.aoq,implantdata.zet)){
+                    ftreeimplantRI[j]->Fill();
+                }
+            }
+
         }
     }
 }

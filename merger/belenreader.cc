@@ -77,6 +77,9 @@ int main(int argc, char* argv[]){
     TTree* treegamma=new TTree("gammas","tree gammas");
     TTree* treeanc=new TTree("anc","tree anc");
 
+    TTree* treeysoion=new TTree("ysoion","tree ysoion");
+    TTree* treeysobeta=new TTree("ysobeta","tree ysobeta");
+
     BELENHit* neutron=new BELENHit;
     CloverHit* gamma=new CloverHit;
     BELENHit* anc=new BELENHit;
@@ -111,6 +114,7 @@ int main(int argc, char* argv[]){
         BelenReader* blrd = new BelenReader;
         blrd->SetGeoMapping(MappingFile);
         if (FillFlag) blrd->BookTree(treeneutron,treegamma,treeanc,neutron,gamma,anc);
+        if (FillFlag) blrd->BookYSOTree(treeysoion,treeysobeta);
         blrd->Init((char*)inputfiles[i].c_str());
         int ctr=0;
         int total = blrd->GetNEvents();
@@ -124,7 +128,7 @@ int main(int argc, char* argv[]){
         //! event loop
         while(blrd->GetNextEvent()){
             ctr=blrd->GetCurrentEvent();
-            if(ctr%1000000 == 0){
+            if(ctr%100000 == 0){
                 int nevtneutron = blrd->GetCurrentNeutronEvent();
                 int nevtgamma = blrd->GetCurrentGammaEvent();
                 int nevtanc = blrd->GetCurrentAncEvent();
@@ -147,10 +151,40 @@ int main(int argc, char* argv[]){
             }
         }
 
+        total = blrd->GetNYSOEvents();
+        time_last = (double) get_time();
+        local_time_start = get_time();
+        //! event loop for YSO
+        while(blrd->GetNextYSOEvent()){
+            ctr=blrd->GetCurrentYSOEvent();
+            if(ctr%1000000 == 0){
+                int nevtysoion = blrd->GetCurrentYSOIonEvent();
+                int nevtysobeta = blrd->GetCurrentYSOBetaEvent();
+
+                double time_end = get_time();
+                cout << inputfiles[i] << setw(5) << setiosflags(ios::fixed) << setprecision(1) << (100.*ctr)/total<<" % done  " <<
+                  (Float_t)(ctr/1000)/(time_end - local_time_start) << "k events/s " <<
+                  (Float_t)(nevtysoion/1000)/(time_end - local_time_start) <<"k yso ion/s  "<<
+                   (Float_t)(nevtysobeta/1000)/(time_end - local_time_start) <<"k yso beta/s "<<
+                   (total-ctr)*(time_end - local_time_start)/(Float_t)ctr << "s to go \r "<<flush;
+
+            }
+            if(signal_received){
+                blrd->CloseReader();
+              break;
+            }
+
+        }
+
+
         cout<<"All Hits= "<<blrd->GetCurrentEvent()<<endl;
         cout<<"  Neutron Hits= "<<blrd->GetCurrentNeutronEvent()<<endl;
         cout<<"  Gamma Hits= "<<blrd->GetCurrentGammaEvent()<<endl;
         cout<<"  Anc Hits= "<<blrd->GetCurrentAncEvent()<<endl;
+
+        cout<<"  YSO Ion Hits= "<<blrd->GetCurrentYSOIonEvent()<<endl;
+        cout<<"  YSO Beta Hits= "<<blrd->GetCurrentYSOBetaEvent()<<endl;
+
         blrd->CloseReader();
         delete blrd;
         ofile->cd();
@@ -161,6 +195,8 @@ int main(int argc, char* argv[]){
         treeneutron->Write();
         treegamma->Write();
         treeanc->Write();
+        treeysoion->Write();
+        treeysobeta->Write();
     }
 
 

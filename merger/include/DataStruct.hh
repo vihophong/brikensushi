@@ -31,6 +31,7 @@ typedef struct {
 } datatype;
 
 typedef struct {
+    Double_t yso_t,yso_e,yso_x,yso_y;
     Double_t zet,aoq,beta;
     Double_t F11L_T,F11L_E,F11R_T,F11R_E,F7_T,veto_T,veto_E;
 
@@ -96,6 +97,7 @@ typedef struct{
     int correntrydEtop;
     int correntrydEbot;
     int correntryvetodown;
+    Double_t yso_t,yso_e,yso_x,yso_y;
     std::vector<gammahit*> gammagc1_vector;
     std::vector<gammahit*> gammagc2_vector;
     std::vector<gammaab*> gammaab1_vector;

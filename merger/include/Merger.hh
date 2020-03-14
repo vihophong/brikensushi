@@ -5,6 +5,7 @@
 #include "Clover.hh"
 #include "Beam.hh"
 
+#include "BRIKENTreeData.hh"
 #include "Wasabi.hh"
 
 #include "TTree.h"
@@ -64,7 +65,7 @@ public:
     void copyWasabiHit(wasabiHit* source,wasabiHit* destination){
         destination->ts=source->ts;
         destination->x=source->x;
-        destination->y=source->x;
+        destination->y=source->y;
         destination->ex=source->ex;
         destination->ey=source->ey;
         destination->blxmax=source->blxmax;
@@ -86,6 +87,23 @@ public:
         //for (Int_t i=0;i<4;i++) ab_des->ab_mult[i]=ab_src->ab_mult[i];
         memcpy(ab_des->ab_mult,ab_src->ab_mult,sizeof(Short_t)*4);
     }
+
+    void copyYSOHit(YSOData* source,YSOData* destination){
+        destination->T=source->T;
+        destination->Tfast=source->Tfast;
+        destination->E=source->E;
+        destination->x=source->x;
+        destination->y=source->y;
+        destination->EX=source->EX;
+        destination->EX=source->EY;
+        destination->nx=source->nx;
+        destination->ny=source->ny;
+        destination->nx=source->nx;
+        destination->nz=source->nz;
+        destination->z=source->z;
+        destination->ID=source->ID;
+    }
+
     void DoAddback();
 
     //!stuff for slew correction
@@ -108,6 +126,9 @@ protected:
     TTree* ftrGamma;
     TTree* ftrAnc;
 
+    TTree* ftrYSOIon;
+    TTree* ftrYSOBeta;
+
     //! enclosing data (tree,file, filename) of Wasabi
     Wasabi * fWasabiBeta;
     Wasabi * fWasabiIon;
@@ -121,11 +142,18 @@ protected:
     Long64_t fnentriesAnc;
     Long64_t fnentriesF11Anc;
 
+    Long64_t fnentriesYSOBeta;
+    Long64_t fnentriesYSOIon;
+
     //! data read from stream
     TreeData* fbigrips;
     CloverHit* fclover;
     BELENHit* fneutron;
     BELENHit* fanc;
+
+    YSOData* fysoion;
+    YSOData* fysobeta;
+
 
     //! time maps
     std::multimap < Long64_t,  wasabiHit*> fwasabiIonMap;
@@ -183,6 +211,12 @@ protected:
     std::multimap < Long64_t, unsigned int>::iterator fdETopMap_it;
     std::multimap < Long64_t, unsigned int>::iterator fdEBotMap_it;
 
+    std::multimap < Long64_t, YSOData*> fYSOIonMap;
+    std::multimap < Long64_t, YSOData*>::iterator fYSOIonMap_it;
+
+    std::multimap < Long64_t, YSOData*> fYSOBetaMap;
+    std::multimap < Long64_t, YSOData*>::iterator fYSOBetaMap_it;
+
     //! time windows
     Long64_t fTW_IonBetalow;
     Long64_t fTW_IonBetaup;
@@ -200,6 +234,10 @@ protected:
 
     Long64_t fTW_PIDGammalow;
     Long64_t fTW_PIDGammaup;
+
+
+    Long64_t fTW_IonYSOionlow;
+    Long64_t fTW_IonYSOionup;
 
 
     //! pulser stuff

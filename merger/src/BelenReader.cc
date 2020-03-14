@@ -36,6 +36,8 @@ BelenReader::BelenReader():rr()
     ftreedataGamma = NULL;
     ftreedataAnc = NULL;
 
+    ftreedataYSO = NULL;
+
     fflag_filldata = false;
 }
 
@@ -72,10 +74,22 @@ void BelenReader::Init(char* belenfile){
     ftree->SetBranchAddress("Gamma.",&ftreedataGamma);
     ftree->SetBranchAddress("Ancillary.",&ftreedataAnc);
 
+
+    ftreeYSO = (TTree*) finfile->Get("YSOTree");
+    finfile->cd();
+    fnentriesYSO = ftreeYSO->GetEntries();
+    cout<<"There are "<<fnentriesYSO<<" entries in YSO"<<endl;
+
+    ftreeYSO->SetBranchAddress("Yso.",&ftreedataYSO);
+
     fcurentry = 0;
+    fcurentryYSO=0;
+
     fBLNeuEntry = 0;
     fBLGamEntry = 0;
     fBLAncEntry = 0;
+    fBLYSOEntryIon = 0;
+    fBLYSOEntryBeta = 0;
     GetGeoMapping();
     //if (!GetNextEvent()) exit(1);
 }
@@ -149,6 +163,16 @@ void BelenReader::BookTree(TTree* treeNeutron, TTree *treeGamma, TTree *treeAnc,
     flocalGamma = gamma;
     flocalAnc = anc;
     fflag_filldata=true;
+}
+
+void BelenReader::BookYSOTree(TTree* treeYSOion,TTree* treeYSObeta)
+{
+    fmtrYSOion = treeYSOion;
+    fmtrYSOion->Branch("ysoion",&ftreedataYSO);
+    fmtrYSOion->BranchRef();
+    fmtrYSObeta = treeYSObeta;
+    fmtrYSObeta->Branch("ysobeta",&ftreedataYSO);
+    fmtrYSObeta->BranchRef();
 }
 
 
@@ -295,6 +319,22 @@ bool BelenReader::GetNextAncEvent(){
         if (!GetNextEvent()) return false;
     }
     fBLAncEntry++;
+    return true;
+}
+
+bool BelenReader::GetNextYSOEvent(){
+    ftreeYSO->GetEntry(fcurentryYSO);
+    //! reco YSO here!
+    if (ftreedataYSO->ID==4){
+        fmtrYSOion->Fill();
+        fBLYSOEntryIon++;
+    }else{
+        fmtrYSObeta->Fill();
+        fBLYSOEntryBeta++;
+    }
+
+    fcurentryYSO++;
+    if (fcurentryYSO>fnentriesYSO) return false;
     return true;
 }
 
